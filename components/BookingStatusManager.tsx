@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { updateSubmissionStatus } from "@/app/actions/submissions";
 import { cn } from "@/lib/utils";
-import { Check, X, Clock, RefreshCw, MoreHorizontal, ShieldCheck, Eye } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Check, X, Clock, RefreshCw, MoreHorizontal, Eye } from "lucide-react";
 
 export default function BookingStatusManager({ initialSubmissions }: { initialSubmissions: any[] }) {
     const [submissions, setSubmissions] = useState(initialSubmissions);
@@ -21,12 +20,12 @@ export default function BookingStatusManager({ initialSubmissions }: { initialSu
 
     if (submissions.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center py-32 bg-slate-50/20 rounded-[32px]">
-                <div className="h-20 w-20 rounded-[24px] bg-slate-100 flex items-center justify-center mb-6">
-                    <Clock className="h-10 w-10 text-slate-300" />
+            <div className="flex flex-col items-center justify-center py-32 bg-gray-50/50 rounded-b-[40px]">
+                <div className="h-16 w-16 rounded-2xl bg-white border border-[#f5f5f5] flex items-center justify-center mb-6">
+                    <Clock className="h-8 w-8 text-[#aaa]" />
                 </div>
-                <p className="text-xl font-black text-[#0f172a]">No records found.</p>
-                <p className="text-sm text-slate-500 mt-2 font-bold tracking-tight">The operational ledger is currently empty.</p>
+                <p className="text-xl font-black text-[#1a1a1a]">No submissions found.</p>
+                <p className="text-sm text-[#888] mt-2 font-medium">New requests will appear here once submitted.</p>
             </div>
         );
     }
@@ -35,69 +34,55 @@ export default function BookingStatusManager({ initialSubmissions }: { initialSu
         <div className="overflow-x-auto">
             <table className="w-full text-left">
                 <thead>
-                    <tr className="bg-slate-50/50 text-[11px] font-black uppercase tracking-[0.15em] text-slate-400 border-b border-slate-100">
-                        <th className="px-10 py-7">Transactional ID</th>
-                        <th className="px-8 py-7">Stakeholder</th>
-                        <th className="px-8 py-7">Classification</th>
-                        <th className="px-8 py-7">Lifecycle Status</th>
-                        <th className="px-10 py-7 text-right">Operations</th>
+                    <tr className="bg-gray-50/50 text-[11px] font-black uppercase tracking-widest text-[#aaa] border-b border-[#f5f5f5]">
+                        <th className="px-10 py-6">ID</th>
+                        <th className="px-8 py-6">Customer</th>
+                        <th className="px-8 py-6">Type</th>
+                        <th className="px-8 py-6">Status</th>
+                        <th className="px-10 py-6 text-right">Action</th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50 text-sm">
+                <tbody className="divide-y divide-gray-50 text-sm">
                     {submissions.map((s) => (
-                        <motion.tr
-                            layout
-                            key={s.id}
-                            className="hover:bg-slate-50/50 transition-colors group"
-                        >
-                            <td className="px-10 py-7">
-                                <div className="flex items-center space-x-3">
-                                    <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-colors">
-                                        <ShieldCheck className="h-4 w-4" />
-                                    </div>
-                                    <span className="font-mono text-[11px] font-black text-[#0f172a] opacity-80">
-                                        TXN-{s.id.slice(0, 6).toUpperCase()}
-                                    </span>
-                                </div>
+                        <tr key={s.id} className="hover:bg-gray-50/50 transition-colors group">
+                            <td className="px-10 py-6 font-mono text-[11px] font-bold text-[#666]">
+                                #{s.id.slice(0, 8).toUpperCase()}
                             </td>
-                            <td className="px-8 py-7">
+                            <td className="px-8 py-6">
                                 <div className="flex flex-col">
-                                    <span className="font-black text-[#0f172a] text-[14px] leading-tight mb-0.5 tracking-tight">{s.full_name}</span>
-                                    <span className="text-slate-400 text-[12px] font-bold tracking-tight">{s.email}</span>
+                                    <span className="font-bold text-[#1a1a1a] text-[14px] leading-tight mb-1">{s.full_name}</span>
+                                    <span className="text-[#888] text-[12px]">{s.email}</span>
                                 </div>
                             </td>
-                            <td className="px-8 py-7">
+                            <td className="px-8 py-6">
                                 <span className={cn(
-                                    "px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border shadow-sm",
-                                    s.service_type === 'rental' ? "bg-indigo-50 text-indigo-600 border-indigo-100/50" :
-                                        s.service_type === 'service' ? "bg-emerald-50 text-emerald-600 border-emerald-100/50" :
-                                            "bg-amber-50 text-amber-600 border-amber-100/50"
+                                    "px-4 py-1.5 rounded-full text-[11px] font-black border uppercase tracking-widest",
+                                    s.service_type === 'rental' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                                        s.service_type === 'service' ? "bg-pink-50 text-[#e91e63] border-pink-100" :
+                                            "bg-purple-50 text-purple-600 border-purple-100"
                                 )}>
-                                    {s.service_type === 'both' ? 'Strategic Package' : s.service_type === 'service' ? 'Event Services' : 'Global Rentals'}
+                                    {s.service_type === 'both' ? 'Both' : s.service_type === 'service' ? 'Service' : 'Rental'}
                                 </span>
                             </td>
-                            <td className="px-8 py-7">
-                                <div className="flex items-center space-x-2">
-                                    <span className={cn(
-                                        "inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border",
-                                        s.status === 'confirmed' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                            s.status === 'pending' ? "bg-indigo-50 text-indigo-600 border-indigo-100" :
-                                                s.status === 'cancelled' ? "bg-rose-50 text-rose-600 border-rose-100" :
-                                                    "bg-slate-50 text-slate-400 border-slate-100"
-                                    )}>
-                                        {s.status === 'pending' && <Clock className="h-3 w-3 mr-2 animate-pulse" />}
-                                        {s.status}
-                                    </span>
-                                </div>
+                            <td className="px-8 py-6">
+                                <span className={cn(
+                                    "inline-flex items-center px-4 py-1.5 rounded-xl text-[11px] font-black border uppercase tracking-widest",
+                                    s.status === 'confirmed' ? "bg-green-50 text-green-600 border-green-100" :
+                                        s.status === 'pending' ? "bg-pink-50 text-[#e91e63] border-pink-100" :
+                                            s.status === 'cancelled' ? "bg-red-50 text-red-600 border-red-100" :
+                                                "bg-gray-50 text-gray-500 border-gray-100"
+                                )}>
+                                    {s.status}
+                                </span>
                             </td>
-                            <td className="px-10 py-7 text-right">
-                                <div className="flex items-center justify-end space-x-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <td className="px-10 py-6 text-right">
+                                <div className="flex items-center justify-end space-x-2">
                                     {s.status === 'pending' && (
                                         <button
                                             onClick={() => handleStatusUpdate(s.id, 'confirmed')}
                                             disabled={updatingId === s.id}
-                                            className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all border border-emerald-100/50 shadow-sm"
-                                            title="Verify & Confirm"
+                                            className="p-2.5 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-all border border-green-100"
+                                            title="Confirm Booking"
                                         >
                                             {updatingId === s.id ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
                                         </button>
@@ -105,17 +90,17 @@ export default function BookingStatusManager({ initialSubmissions }: { initialSu
                                     <button
                                         onClick={() => handleStatusUpdate(s.id, 'cancelled')}
                                         disabled={updatingId === s.id}
-                                        className="p-2.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition-all border border-rose-100/50 shadow-sm"
-                                        title="Cancel Cycle"
+                                        className="p-2.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-all border border-red-100"
+                                        title="Cancel Booking"
                                     >
                                         <X className="h-4 w-4" />
                                     </button>
-                                    <button className="p-2.5 rounded-xl bg-slate-50 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-slate-100 shadow-sm">
+                                    <button className="p-2.5 rounded-xl bg-gray-50 text-gray-400 hover:bg-white hover:text-[#e91e63] transition-all border border-transparent hover:border-[#f5f5f5] shadow-sm">
                                         <Eye className="h-4 w-4" />
                                     </button>
                                 </div>
                             </td>
-                        </motion.tr>
+                        </tr>
                     ))}
                 </tbody>
             </table>
