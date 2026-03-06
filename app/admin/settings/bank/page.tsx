@@ -19,15 +19,16 @@ export default function BankSettingsPage() {
 
     useEffect(() => {
         if (!supabase) return;
+        const db = supabase;
         async function fetchSettings() {
-            const { data } = await supabase
+            const { data } = await db
                 .from("settings")
                 .select("value")
                 .eq("key", "bank_details")
                 .single();
 
-            if (data) {
-                setBankDetails(data.value);
+            if (data?.value) {
+                setBankDetails(data.value as { bankName: string; accountName: string; accountNumber: string; instructions: string });
             }
         }
         fetchSettings();
