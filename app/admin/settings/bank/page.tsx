@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import AdminSidebar from "@/components/AdminSidebar";
 import { CreditCard, Save, RefreshCw, AlertCircle, ArrowLeft } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
@@ -69,10 +68,7 @@ export default function BankSettingsPage() {
     };
 
     return (
-        <div className="flex min-h-screen bg-[#fcfcfc]">
-            <AdminSidebar />
-            <main className="flex-grow md:pl-[280px] py-8 px-4 md:px-8 mt-14 md:mt-0">
-                <div className="max-w-2xl mx-auto space-y-6">
+        <div className="max-w-2xl mx-auto space-y-6">
                     <header className="space-y-4">
                         <Link href="/admin/bookings" prefetch={false} className="inline-flex items-center text-xs font-bold text-[#888] hover:text-[#e91e63] transition-colors group">
                             <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-0.5 transition-transform" />
@@ -167,7 +163,5 @@ export default function BankSettingsPage() {
                         </form>
                     </div>
                 </div>
-            </main>
-        </div>
     );
 }

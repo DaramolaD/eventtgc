@@ -1,5 +1,4 @@
 import { getSubmissions } from "@/app/actions/submissions";
-import AdminSidebar from "@/components/AdminSidebar";
 import BookingStatusManager from "@/components/BookingStatusManager";
 import { Landmark, FileDown } from "lucide-react";
 import Link from "next/link";
@@ -8,12 +7,9 @@ export default async function AdminBookingsPage() {
     const { data: submissions = [] } = await getSubmissions();
 
     return (
-        <div className="flex min-h-screen bg-[#fcfcfc]">
-            <AdminSidebar />
-            <main className="flex-grow md:pl-[280px] py-8 px-4 md:px-8 mt-14 md:mt-0">
-                <div className="max-w-6xl mx-auto space-y-6">
-                    {/* Header */}
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="max-w-6xl mx-auto space-y-6">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-serif font-black text-[#1a1a1a] tracking-tight mb-1 underline decoration-[#e91e63] decoration-4 underline-offset-4">
                                 Submissions
@@ -39,14 +35,12 @@ export default async function AdminBookingsPage() {
                                 Total: {submissions.length}
                             </div>
                         </div>
-                    </div>
+            </div>
 
-                    {/* Content Card */}
-                    <div className="bg-white rounded-2xl border border-[#eee] shadow-[0_2px_12px_rgba(0,0,0,0.04)] overflow-hidden">
-                        <BookingStatusManager initialSubmissions={submissions} />
-                    </div>
-                </div>
-            </main>
+            {/* Content Card */}
+            <div className="bg-white rounded-2xl border border-[#eee] shadow-[0_2px_12px_rgba(0,0,0,0.04)] overflow-hidden">
+                <BookingStatusManager initialSubmissions={submissions} />
+            </div>
         </div>
     );
 }
