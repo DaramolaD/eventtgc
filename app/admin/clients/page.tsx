@@ -1,6 +1,6 @@
 import { getSubmissions } from "@/app/actions/submissions";
 import AdminSidebar from "@/components/AdminSidebar";
-import { Search, UserCircle, Mail, Phone, Calendar, MoreHorizontal, Activity, Users } from "lucide-react";
+import { Search, UserCircle, Mail, Phone, Calendar, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default async function AdminClientsPage() {
@@ -23,94 +23,66 @@ export default async function AdminClientsPage() {
     const clients = Array.from(clientsMap.values());
 
     return (
-        <div className="flex min-h-screen bg-[#fcfdfe]">
+        <div className="flex min-h-screen bg-[#fcfcfc]">
             <AdminSidebar />
-            <main className="flex-grow pl-72 py-12 px-10">
-                <div className="max-w-7xl mx-auto space-y-12">
-                    <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-                        <div className="space-y-2">
-                            <div className="flex items-center space-x-2 text-[12px] font-black text-indigo-600 uppercase tracking-[0.2em]">
-                                <Activity className="h-3 w-3" />
-                                <span>Stakeholder Relations</span>
-                            </div>
-                            <h1 className="text-4xl font-black text-[#0f172a] tracking-tight">
-                                Client <span className="text-slate-400 font-medium">Base Intelligence</span>
-                            </h1>
-                            <p className="text-slate-500 font-bold text-[15px]">
-                                Holistic oversight of your event partners and customer loyalty metrics.
-                            </p>
+            <main className="flex-grow pl-72 py-10 px-10">
+                <div className="max-w-7xl mx-auto space-y-10">
+                    <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                            <h1 className="text-4xl font-black text-[#1a1a1a] mb-2 tracking-tight">Clients</h1>
+                            <p className="text-[#888] font-medium text-[15px]">Manage and view your customer database.</p>
                         </div>
                         <div className="flex items-center gap-4">
                             <div className="relative group w-80">
-                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#aaa] group-focus-within:text-[#e91e63] transition-colors" />
                                 <input
                                     type="text"
-                                    placeholder="Filter partners..."
-                                    className="w-full rounded-2xl border border-slate-200 bg-white px-6 py-4 pl-14 text-[13px] font-black text-slate-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all shadow-sm"
+                                    placeholder="Search clients..."
+                                    className="w-full rounded-2xl border border-[#f0f0f0] bg-white px-6 py-4 pl-14 text-[13px] font-bold text-[#1a1a1a] focus:outline-none focus:ring-4 focus:ring-pink-500/5 focus:border-[#e91e63] transition-all shadow-sm"
                                 />
-                            </div>
-                            <div className="rounded-2xl bg-indigo-50 px-6 py-4 text-[13px] font-black text-indigo-600 border border-indigo-100 shadow-sm flex items-center">
-                                <Users className="h-4 w-4 mr-2" />
-                                <span>Total Reach: {clients.length}</span>
                             </div>
                         </div>
                     </header>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {clients.length === 0 ? (
-                            <div className="col-span-full py-40 text-center bg-white rounded-[40px] border border-slate-100 shadow-2xl shadow-slate-200/40">
-                                <div className="h-24 w-24 rounded-[32px] bg-slate-50 flex items-center justify-center mx-auto mb-8">
-                                    <UserCircle className="h-12 w-12 text-slate-200" />
-                                </div>
-                                <h3 className="text-2xl font-black text-[#0f172a] tracking-tight">No stakeholder data identified.</h3>
-                                <p className="text-slate-400 text-sm mt-3 font-bold max-w-xs mx-auto leading-relaxed">Intelligence will populate dynamically as lifecycle activations occur.</p>
+                            <div className="col-span-full py-40 text-center bg-white rounded-[40px] border border-[#f5f5f5] shadow-sm">
+                                <UserCircle className="h-16 w-16 text-[#eee] mx-auto mb-6" />
+                                <h3 className="text-2xl font-black text-[#1a1a1a]">No clients found.</h3>
+                                <p className="text-[#888] text-sm mt-2 font-medium">New clients will appear here automatically.</p>
                             </div>
                         ) : (
                             clients.map((client) => (
-                                <div key={client.email} className="bg-white p-10 rounded-[40px] border border-slate-100/80 shadow-2xl shadow-slate-200/40 transition-all hover:shadow-slate-200/60 group hover:-translate-y-1.5 duration-500 relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 p-10 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity">
-                                        <Users size={100} />
-                                    </div>
-                                    <div className="flex items-center justify-between mb-10">
-                                        <div className="h-16 w-16 rounded-[24px] bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                                            <UserCircle className="h-9 w-9" />
+                                <div key={client.email} className="bg-white p-8 rounded-[32px] border border-[#f5f5f5] shadow-sm hover:shadow-md transition-all group">
+                                    <div className="flex items-center justify-between mb-8">
+                                        <div className="h-14 w-14 rounded-2xl bg-pink-50 flex items-center justify-center text-[#e91e63]">
+                                            <UserCircle size={32} />
                                         </div>
-                                        <button className="p-3.5 rounded-xl hover:bg-slate-50 transition-all text-slate-300 border border-transparent hover:border-slate-100">
-                                            <MoreHorizontal className="h-6 w-6" />
+                                        <button className="p-2 rounded-xl hover:bg-gray-50 text-[#ccc] hover:text-[#1a1a1a] transition-all">
+                                            <MoreHorizontal size={20} />
                                         </button>
                                     </div>
-
-                                    <div className="mb-10 relative z-10">
-                                        <h3 className="text-2xl font-black text-[#0f172a] tracking-tight group-hover:text-indigo-600 transition-colors">{client.name}</h3>
-                                        <p className="text-[14px] font-bold text-slate-400 mt-1.5 flex items-center tracking-tight">
-                                            <Mail className="h-3 w-3 mr-2 opacity-50" />
-                                            {client.email}
-                                        </p>
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-black text-[#1a1a1a] tracking-tight">{client.name}</h3>
+                                        <p className="text-[#aaa] text-[11px] font-black uppercase tracking-widest mt-1">Client ID: {client.email.split('@')[0].toUpperCase()}</p>
                                     </div>
-
-                                    <div className="space-y-4 pt-10 border-t border-slate-50">
-                                        <div className="flex items-center text-[13px] font-bold text-slate-600">
-                                            <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center mr-4 text-slate-400">
-                                                <Phone className="h-4 w-4" />
-                                            </div>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center text-[13px] font-bold text-[#666]">
+                                            <Mail className="h-4 w-4 mr-3 text-[#aaa]" />
+                                            {client.email}
+                                        </div>
+                                        <div className="flex items-center text-[13px] font-bold text-[#666]">
+                                            <Phone className="h-4 w-4 mr-3 text-[#aaa]" />
                                             {client.phone}
                                         </div>
-                                        <div className="flex items-center text-[13px] font-bold text-slate-600">
-                                            <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center mr-4 text-slate-400">
-                                                <Calendar className="h-4 w-4" />
-                                            </div>
-                                            <span className="text-slate-400 mr-2 uppercase text-[11px] font-black tracking-widest">Last Cycle</span>
-                                            {client.lastBooking ? new Date(client.lastBooking).toLocaleDateString() : 'N/A'}
+                                        <div className="flex items-center text-[13px] font-bold text-[#666]">
+                                            <Calendar className="h-4 w-4 mr-3 text-[#aaa]" />
+                                            Engagement: {client.totalBookings} Bookings
                                         </div>
                                     </div>
-
-                                    <div className="mt-10 pt-10 border-t border-slate-50 flex items-center justify-between">
-                                        <span className="px-5 py-2.5 rounded-xl bg-slate-900 text-[11px] font-black text-white uppercase tracking-widest shadow-lg shadow-slate-200">
-                                            {client.totalBookings} {client.totalBookings === 1 ? 'Booking' : 'Bookings'}
-                                        </span>
-                                        <button className="text-[13px] font-black text-indigo-600 hover:text-indigo-700 underline underline-offset-8 decoration-2 tracking-tight transition-all">
-                                            Analyze Profile
-                                        </button>
+                                    <div className="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
+                                        <span className="text-[11px] font-black uppercase tracking-widest text-[#e91e63]">Verified</span>
+                                        <button className="text-[13px] font-bold text-[#1a1a1a] hover:text-[#e91e63] transition-colors">Details</button>
                                     </div>
                                 </div>
                             ))
