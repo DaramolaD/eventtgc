@@ -10,7 +10,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
                     {/* Logo & Description */}
                     <div className="space-y-6">
-                        <Link href="/" className="flex items-center space-x-2">
+                        <Link href="/" prefetch={false} className="flex items-center space-x-2">
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
                                 <span className="text-xs font-bold text-white tracking-tighter">TGC</span>
                             </div>
@@ -25,10 +25,10 @@ export default function Footer() {
                     <div>
                         <h3 className="text-lg font-bold mb-6">Quick Links</h3>
                         <ul className="space-y-4 text-sm text-white/60">
-                            <li><Link href="/" className="hover:text-primary transition-colors">Home</Link></li>
-                            <li><Link href="/booking" className="hover:text-primary transition-colors">Book Now</Link></li>
-                            <li><Link href="/#services" className="hover:text-primary transition-colors">Services</Link></li>
-                            <li><Link href="/mybookings" className="hover:text-primary transition-colors">My Bookings</Link></li>
+                            <li><Link href="/" prefetch={false} className="hover:text-primary transition-colors">Home</Link></li>
+                            <li><Link href="/booking" prefetch={false} className="hover:text-primary transition-colors">Book Now</Link></li>
+                            <li><Link href="/services" prefetch={false} className="hover:text-primary transition-colors">Services</Link></li>
+                            <li><Link href="/mybookings" prefetch={false} className="hover:text-primary transition-colors">My Bookings</Link></li>
                         </ul>
                     </div>
 

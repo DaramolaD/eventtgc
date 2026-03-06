@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 const navigation = [
     { name: "Home", href: "/" },
-    { name: "Services", href: "/#services" },
+    { name: "Services", href: "/services" },
     { name: "Book Now", href: "/booking", isButton: true },
     { name: "My Bookings", href: "/mybookings" },
 ];
@@ -35,7 +35,7 @@ export default function Header() {
         >
             <div className="container mx-auto px-4 md:px-6">
                 <nav className="flex items-center justify-between">
-                    <Link href="/" className="group flex items-center space-x-2">
+                    <Link href="/" prefetch={false} className="group flex items-center space-x-2">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black shadow-lg transition-transform group-hover:scale-110">
                             <span className="text-sm font-bold text-white tracking-tighter">TGC</span>
                         </div>
@@ -50,6 +50,7 @@ export default function Header() {
                             <Link
                                 key={item.name}
                                 href={item.href}
+                                prefetch={false}
                                 className={cn(
                                     "text-sm font-semibold transition-colors",
                                     item.isButton
@@ -80,6 +81,7 @@ export default function Header() {
                             <Link
                                 key={item.name}
                                 href={item.href}
+                                prefetch={false}
                                 onClick={() => setIsOpen(false)}
                                 className={cn(
                                     "flex items-center space-x-3 rounded-xl px-4 py-3 text-base font-medium transition-all",

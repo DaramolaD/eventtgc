@@ -5,8 +5,8 @@ import Header from "./Header";
 import Footer from "./Footer";
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname();
-    const isAdminPage = pathname?.startsWith("/admin") || pathname?.startsWith("/admin-dashboard");
+    const pathname = usePathname() ?? "";
+    const isAdminPage = pathname.startsWith("/admin") || pathname.startsWith("/admin-dashboard");
 
     if (isAdminPage) {
         return <main className="min-h-screen bg-[#fcfcfc]">{children}</main>;

@@ -26,8 +26,8 @@ const serviceTags = [
     "Decorations", "Catering", "Drop-off Menu Order", "Event Coordination", "DJ / Music", "Photography", "Venue Setup", "Other (Please specify)"
 ];
 
-export default function BookingForm() {
-    const [activeType, setActiveType] = useState<"rental" | "service" | "both">("rental");
+export default function BookingForm({ initialServiceType }: { initialServiceType?: "rental" | "service" | "both" }) {
+    const [activeType, setActiveType] = useState<"rental" | "service" | "both">(initialServiceType || "rental");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -46,6 +46,10 @@ export default function BookingForm() {
             servicesNeeded: [],
         }
     });
+
+    useEffect(() => {
+        if (initialServiceType) setActiveType(initialServiceType);
+    }, [initialServiceType]);
 
     useEffect(() => {
         setValue("serviceType", activeType);

@@ -3,6 +3,7 @@ import AdminSidebar from "@/components/AdminSidebar";
 import BookingStatusManager from "@/components/BookingStatusManager";
 import { ClipboardList, Users, CheckCircle, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export default async function AdminDashboardPage() {
     const { data: submissions = [] } = await getSubmissions();
@@ -34,42 +35,36 @@ export default async function AdminDashboardPage() {
     return (
         <div className="flex min-h-screen bg-[#fcfcfc]">
             <AdminSidebar />
-            <main className="flex-grow pl-72 py-10 px-10">
-                <div className="max-w-7xl mx-auto space-y-10">
-                    <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                        <div>
-                            <h1 className="text-4xl font-black text-[#1a1a1a] mb-2 tracking-tight">Dashboard</h1>
-                            <p className="text-[#888] font-medium">Overview of your recent activity and metrics.</p>
-                        </div>
+            <main className="flex-grow md:pl-[280px] py-8 px-4 md:px-8 mt-14 md:mt-0">
+                <div className="max-w-6xl mx-auto space-y-8">
+                    <header>
+                        <h1 className="text-3xl md:text-4xl font-serif font-black text-[#1a1a1a] mb-1 tracking-tight underline decoration-[#e91e63] decoration-4 underline-offset-4">Dashboard</h1>
+                        <p className="text-[#888] font-medium text-sm mt-2">Overview of your recent activity and metrics.</p>
                     </header>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {stats.map((stat, idx) => (
-                            <div key={idx} className="bg-white p-8 rounded-[32px] border border-[#f5f5f5] shadow-sm hover:shadow-md transition-all group">
-                                <div className="flex items-center justify-between mb-8">
-                                    <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110", stat.bg, stat.color)}>
-                                        <stat.icon className="h-7 w-7" />
-                                    </div>
+                            <div key={idx} className="bg-white p-6 rounded-2xl border border-[#eee] shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-shadow group">
+                                <div className={cn("h-12 w-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-105", stat.bg, stat.color)}>
+                                    <stat.icon className="h-6 w-6" />
                                 </div>
-                                <div>
-                                    <h3 className="text-[#888] text-[13px] font-bold uppercase tracking-widest mb-1">{stat.label}</h3>
-                                    <p className="text-4xl font-black text-[#1a1a1a] tracking-tight">{stat.value}</p>
-                                </div>
+                                <h3 className="text-[#888] text-xs font-bold uppercase tracking-widest mb-1">{stat.label}</h3>
+                                <p className="text-3xl font-black text-[#1a1a1a] tracking-tight">{stat.value}</p>
                             </div>
                         ))}
                     </div>
 
-                    <div className="bg-white rounded-[40px] border border-[#f5f5f5] shadow-sm overflow-hidden">
-                        <div className="px-10 py-8 border-b border-[#f5f5f5] flex items-center justify-between">
+                    <div className="bg-white rounded-2xl border border-[#eee] shadow-[0_2px_12px_rgba(0,0,0,0.04)] overflow-hidden">
+                        <div className="px-6 py-6 border-b border-[#f0f0f0] flex items-center justify-between">
                             <div className="flex items-center space-x-4">
                                 <div className="h-10 w-10 rounded-xl bg-gray-50 flex items-center justify-center">
                                     <ClipboardList className="h-5 w-5 text-[#aaa]" />
                                 </div>
                                 <h2 className="text-xl font-black text-[#1a1a1a] tracking-tight">Recent Submissions</h2>
                             </div>
-                            <button className="text-[13px] font-bold text-[#e91e63] hover:underline">
+                            <Link href="/admin/bookings" prefetch={false} className="text-[13px] font-bold text-[#e91e63] hover:underline">
                                 View all
-                            </button>
+                            </Link>
                         </div>
                         <div className="overflow-x-auto">
                             <BookingStatusManager initialSubmissions={submissions.slice(0, 10)} />

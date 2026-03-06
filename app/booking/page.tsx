@@ -1,10 +1,15 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import BookingForm from "@/components/BookingForm";
 import { Sparkles } from "lucide-react";
 
 export default function BookingPage() {
+    const searchParams = useSearchParams();
+    const type = searchParams.get("type") as "rental" | "service" | "both" | null;
+    const initialType = type && ["rental", "service", "both"].includes(type) ? type : undefined;
+
     return (
         <div className="min-h-screen pt-32 pb-20 px-4">
             <div className="container mx-auto max-w-4xl">
@@ -32,7 +37,7 @@ export default function BookingPage() {
                     transition={{ duration: 0.5, delay: 0.1 }}
                     className="glass rounded-[32px] p-8 md:p-12 shadow-2xl border-border/50"
                 >
-                    <BookingForm />
+                    <BookingForm initialServiceType={initialType} />
                 </motion.div>
             </div>
         </div>

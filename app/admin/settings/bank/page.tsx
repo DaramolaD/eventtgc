@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import AdminSidebar from "@/components/AdminSidebar";
-import { CreditCard, Save, RefreshCw, AlertCircle, ArrowLeft, ShieldCheck, Activity } from "lucide-react";
+import { CreditCard, Save, RefreshCw, AlertCircle, ArrowLeft } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -16,11 +15,12 @@ export default function BankSettingsPage() {
         instructions: "",
     });
     const [isSaving, setIsSaving] = useState(false);
-    const [message, setMessage] = useState({ type: "", text: "" });
+    const [message, setMessage] = useState<{ type: string; text: string }>({ type: "", text: "" });
 
     useEffect(() => {
+        if (!supabase) return;
         async function fetchSettings() {
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from("settings")
                 .select("value")
                 .eq("key", "bank_details")
@@ -39,6 +39,10 @@ export default function BankSettingsPage() {
         setMessage({ type: "", text: "" });
 
         try {
+            if (!supabase) {
+                setMessage({ type: "error", text: "Database not configured." });
+                return;
+            }
             const { error } = await supabase
                 .from("settings")
                 .upsert({
@@ -46,139 +50,118 @@ export default function BankSettingsPage() {
                     value: bankDetails
                 }, { onConflict: "key" });
 
-            if (error) throw error;
-            setMessage({ type: "success", text: "Enterprise configuration synchronized successfully." });
-        } catch (error) {
-            console.error("Save settings error:", error);
-            setMessage({ type: "error", text: "Critical: Failed to update disbursement parameters." });
+            if (error) {
+                const msg = (error as { message?: string }).message ?? "Failed to save settings.";
+                console.error("Save settings error:", msg, error);
+                setMessage({ type: "error", text: msg });
+                return;
+            }
+            setMessage({ type: "success", text: "Settings saved successfully." });
+        } catch (error: unknown) {
+            const err = error as { message?: string };
+            const msg = err?.message ?? "Failed to save settings. Please try again.";
+            console.error("Save settings error:", msg, error);
+            setMessage({ type: "error", text: msg });
         } finally {
             setIsSaving(false);
         }
     };
 
     return (
-        <div className="flex min-h-screen bg-[#fcfdfe]">
+        <div className="flex min-h-screen bg-[#fcfcfc]">
             <AdminSidebar />
-            <main className="flex-grow pl-72 py-12 px-10">
-                <div className="max-w-4xl mx-auto space-y-12">
-                    <header className="space-y-6">
-                        <Link href="/admin-dashboard" className="inline-flex items-center text-[13px] font-black text-slate-400 hover:text-indigo-600 transition-all tracking-[0.1em] uppercase group">
-                            <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-                            Return to Hub
+            <main className="flex-grow md:pl-[280px] py-8 px-4 md:px-8 mt-14 md:mt-0">
+                <div className="max-w-2xl mx-auto space-y-6">
+                    <header className="space-y-4">
+                        <Link href="/admin/bookings" prefetch={false} className="inline-flex items-center text-xs font-bold text-[#888] hover:text-[#e91e63] transition-colors group">
+                            <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-0.5 transition-transform" />
+                            Back to Submissions
                         </Link>
-                        <div className="space-y-2">
-                            <div className="flex items-center space-x-2 text-[12px] font-black text-indigo-600 uppercase tracking-[0.2em]">
-                                <Activity className="h-3 w-3" />
-                                <span>Financial Infrastructure</span>
-                            </div>
-                            <h1 className="text-4xl font-black text-[#0f172a] tracking-tight">
-                                Disbursement <span className="text-slate-400 font-medium">Configuration</span>
+                        <div>
+                            <h1 className="text-3xl md:text-4xl font-serif font-black text-[#1a1a1a] mb-1 tracking-tight underline decoration-[#e91e63] decoration-4 underline-offset-4">
+                                Bank Settings
                             </h1>
-                            <p className="text-slate-500 font-bold text-[15px]">
-                                Establish the primary gateway for client settlements and financial routing.
+                            <p className="text-[#888] font-medium text-sm mt-2">
+                                Configure your payment receiving details.
                             </p>
                         </div>
                     </header>
 
-                    <div className="grid grid-cols-1 gap-12">
-                        <form onSubmit={handleSave} className="bg-white p-16 rounded-[48px] border border-slate-100 shadow-2xl shadow-slate-200/50 space-y-12 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-16 opacity-[0.02]">
-                                <CreditCard size={150} />
-                            </div>
-
-                            <div className="flex items-center space-x-5 pb-10 border-b border-slate-50 relative z-10">
-                                <div className="h-16 w-16 rounded-[24px] bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-inner">
-                                    <CreditCard className="h-8 w-8" />
+                    <div className="bg-white p-6 md:p-10 rounded-2xl border border-[#eee] shadow-[0_2px_12px_rgba(0,0,0,0.04)] relative overflow-hidden">
+                        <form onSubmit={handleSave} className="space-y-10 relative z-10">
+                            <div className="flex items-center space-x-5 pb-8 border-b border-gray-50">
+                                <div className="h-14 w-14 rounded-2xl bg-pink-50 flex items-center justify-center text-[#e91e63]">
+                                    <CreditCard size={28} />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black text-[#0f172a] tracking-tight">Settlement Parameters</h2>
-                                    <p className="text-[13px] font-bold text-slate-400 mt-1">Configure your institutional destination</p>
+                                    <h2 className="text-xl font-bold text-[#1a1a1a]">Payment Details</h2>
+                                    <p className="text-[13px] font-medium text-[#aaa]">Where your payments will be sent</p>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-10">
-                                <div className="space-y-4">
-                                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] ml-1">Institutional Entity</label>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-3">
+                                    <label className="text-[11px] font-black text-[#666] uppercase tracking-widest ml-1">Bank Name</label>
                                     <input
                                         type="text"
                                         value={bankDetails.bankName}
                                         onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
-                                        className="w-full rounded-2xl border border-slate-200 bg-white px-7 py-5 text-[14px] font-black text-[#0f172a] focus:outline-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all placeholder:text-slate-300 shadow-sm"
-                                        placeholder="e.g. Apex Global Bank"
+                                        className="w-full rounded-2xl border border-gray-200 bg-white px-6 py-4 text-[14px] font-bold text-[#1a1a1a] focus:outline-none focus:ring-4 focus:ring-pink-500/5 focus:border-[#e91e63] transition-all placeholder:text-[#ccc]"
+                                        placeholder="e.g. GTBank"
                                     />
                                 </div>
 
-                                <div className="space-y-4">
-                                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] ml-1">Fiduciary Title</label>
+                                <div className="space-y-3">
+                                    <label className="text-[11px] font-black text-[#666] uppercase tracking-widest ml-1">Account Name</label>
                                     <input
                                         type="text"
                                         value={bankDetails.accountName}
                                         onChange={(e) => setBankDetails({ ...bankDetails, accountName: e.target.value })}
-                                        className="w-full rounded-2xl border border-slate-200 bg-white px-7 py-5 text-[14px] font-black text-[#0f172a] focus:outline-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all placeholder:text-slate-300 shadow-sm"
-                                        placeholder="e.g. TGC Operations Group"
+                                        className="w-full rounded-2xl border border-gray-200 bg-white px-6 py-4 text-[14px] font-bold text-[#1a1a1a] focus:outline-none focus:ring-4 focus:ring-pink-500/5 focus:border-[#e91e63] transition-all placeholder:text-[#ccc]"
+                                        placeholder="e.g. TGC Events Hub"
                                     />
                                 </div>
 
-                                <div className="space-y-4">
-                                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] ml-1">Routing Matrix (Acct Num)</label>
+                                <div className="space-y-3 md:col-span-2">
+                                    <label className="text-[11px] font-black text-[#666] uppercase tracking-widest ml-1">Account Number</label>
                                     <input
                                         type="text"
                                         value={bankDetails.accountNumber}
                                         onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })}
-                                        className="w-full rounded-2xl border border-slate-200 bg-white px-7 py-5 text-[14px] font-black text-[#0f172a] focus:outline-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all placeholder:text-slate-300 shadow-sm"
-                                        placeholder="0000 0000 0000"
+                                        className="w-full rounded-2xl border border-gray-200 bg-white px-6 py-4 text-[14px] font-bold text-[#1a1a1a] focus:outline-none focus:ring-4 focus:ring-pink-500/5 focus:border-[#e91e63] transition-all placeholder:text-[#ccc]"
+                                        placeholder="0000000000"
                                     />
                                 </div>
 
-                                <div className="space-y-4">
-                                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] ml-1">Compliance Descriptor</label>
-                                    <div className="flex items-center px-7 py-5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-400 space-x-3">
-                                        <ShieldCheck className="h-5 w-5 text-emerald-500" />
-                                        <span className="text-[13px] font-bold">Standard SEC Verified</span>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4 md:col-span-2">
-                                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] ml-1">Operational Instructions</label>
+                                <div className="space-y-3 md:col-span-2">
+                                    <label className="text-[11px] font-black text-[#666] uppercase tracking-widest ml-1">Special Instructions (Optional)</label>
                                     <textarea
                                         value={bankDetails.instructions}
                                         onChange={(e) => setBankDetails({ ...bankDetails, instructions: e.target.value })}
-                                        rows={4}
-                                        className="w-full rounded-[24px] border border-slate-200 bg-white px-7 py-6 text-[14px] font-black text-[#0f172a] focus:outline-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all resize-none placeholder:text-slate-300 shadow-sm leading-relaxed"
-                                        placeholder="Specify disbursement windows or institutional requirements..."
+                                        rows={3}
+                                        className="w-full rounded-[24px] border border-gray-200 bg-white px-6 py-5 text-[14px] font-bold text-[#1a1a1a] focus:outline-none focus:ring-4 focus:ring-pink-500/5 focus:border-[#e91e63] transition-all resize-none placeholder:text-[#ccc] leading-relaxed"
+                                        placeholder="Any additional info for payments..."
                                     />
                                 </div>
                             </div>
 
-                            <AnimatePresence>
-                                {message.text && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
-                                        exit={{ opacity: 0, height: 0 }}
-                                        className={cn(
-                                            "p-7 rounded-[24px] flex items-center space-x-4 text-[13px] font-bold",
-                                            message.type === "success"
-                                                ? "bg-emerald-50 text-emerald-700 border border-emerald-100/50 shadow-sm"
-                                                : "bg-rose-50 text-rose-700 border border-rose-100/50 shadow-sm"
-                                        )}
-                                    >
-                                        <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center", message.type === "success" ? "bg-emerald-100" : "bg-rose-100")}>
-                                            <AlertCircle className="h-4 w-4" />
-                                        </div>
-                                        <span>{message.text}</span>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                            {message.text && (
+                                <div className={cn(
+                                    "p-6 rounded-2xl flex items-center space-x-3 text-[13px] font-bold animate-in fade-in slide-in-from-top-1",
+                                    message.type === "success" ? "bg-green-50 text-green-700 border border-green-100" : "bg-red-50 text-red-700 border border-red-100"
+                                )}>
+                                    <AlertCircle size={18} />
+                                    <span>{message.text}</span>
+                                </div>
+                            )}
 
                             <button
                                 type="submit"
                                 disabled={isSaving}
-                                className="w-full rounded-[28px] bg-[#0f172a] py-7 font-black text-white shadow-2xl shadow-indigo-200 transition-all hover:bg-slate-800 hover:scale-[1.01] active:scale-95 disabled:opacity-50 flex items-center justify-center space-x-4 tracking-[0.1em] uppercase relative overflow-hidden group"
+                                className="w-full rounded-3xl bg-[#e91e63] py-6 font-black text-white shadow-xl shadow-pink-100 transition-all hover:bg-[#d81b60] hover:scale-[1.01] active:scale-95 disabled:opacity-50 flex items-center justify-center space-x-2"
                             >
-                                <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/0 via-white/5 to-indigo-600/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                                {isSaving ? <RefreshCw className="h-6 w-6 animate-spin" /> : <Save className="h-6 w-6" />}
-                                <span className="text-[15px]">{isSaving ? "Synchronizing..." : "Update Infrastructure"}</span>
+                                {isSaving ? <RefreshCw className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                                <span className="text-[15px]">{isSaving ? "Saving..." : "Save Changes"}</span>
                             </button>
                         </form>
                     </div>
