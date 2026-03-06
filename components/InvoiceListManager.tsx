@@ -43,7 +43,7 @@ export default function InvoiceListManager({ initialInvoices }: { initialInvoice
                     inv.id === id ? { ...inv, payment_confirmed_at: new Date().toISOString(), status: "confirmed" } : inv
                 )
             );
-            setSelectedInvoice((prev) =>
+            setSelectedInvoice((prev: Invoice | null) =>
                 prev?.id === id ? { ...prev, payment_confirmed_at: new Date().toISOString(), status: "confirmed" } : prev
             );
         }
