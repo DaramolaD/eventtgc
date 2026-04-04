@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Search, X, FileText, Landmark, CheckCircle2, Clock, AlertCircle, Loader2 } from "lucide-react";
+import { Search, X, FileText, Landmark, CheckCircle2, Clock, AlertCircle, Loader2, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { confirmPayment, getBankDetails } from "@/app/actions/submissions";
-import Link from "next/link";
+import { downloadInvoiceFile } from "@/lib/invoiceDownload";
 
 type Invoice = any;
 
@@ -229,6 +229,14 @@ export default function InvoiceListManager({ initialInvoices }: { initialInvoice
                                     </div>
                                 </div>
                             )}
+                            <button
+                                type="button"
+                                onClick={() => downloadInvoiceFile(selectedInvoice, bankDetails)}
+                                className="inline-flex items-center gap-2 rounded-xl border border-[#eee] bg-white hover:bg-gray-50 text-[#1a1a1a] px-4 py-2.5 text-sm font-bold transition-all"
+                            >
+                                <Download className="h-4 w-4" />
+                                Download invoice (.txt)
+                            </button>
                         </div>
                     </div>
                 </div>

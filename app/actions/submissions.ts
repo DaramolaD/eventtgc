@@ -185,6 +185,7 @@ export async function generateInvoice(id: string) {
         revalidatePath("/admin/bookings");
         revalidatePath("/admin/invoices");
         revalidatePath("/admin-dashboard");
+        revalidatePath("/mybookings");
         return { success: true, invoice_number: invoiceNumber };
     } catch (error: unknown) {
         const msg = (error as { message?: string }).message ?? "Failed to generate invoice";

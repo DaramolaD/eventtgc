@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import { getBankDetails, reportPayment } from "@/app/actions/submissions";
+import { downloadInvoiceFile } from "@/lib/invoiceDownload";
 import { cn } from "@/lib/utils";
-import { ShoppingBag, Clock, CheckCircle2, Search, ArrowRight, FileText, X, Landmark, User, Mail, Phone, MapPin, Calendar, Users, Package, MessageSquare, Banknote, Loader2 } from "lucide-react";
+import { ShoppingBag, Clock, CheckCircle2, Search, ArrowRight, FileText, X, Landmark, User, Mail, Phone, MapPin, Calendar, Users, Package, MessageSquare, Banknote, Loader2, Download } from "lucide-react";
 
 type BankDetails = { bankName: string; accountName: string; accountNumber: string; instructions: string } | null;
 
@@ -174,6 +175,17 @@ export default function MyBookingsPage() {
                                                         <h3 className="text-xl md:text-2xl font-semibold text-foreground capitalize mt-2">
                                                             {s.service_type} package
                                                         </h3>
+                                                        <p className="text-xs text-muted-foreground mt-1.5">
+                                                            {!s.invoice_generated_at ? (
+                                                                <>Invoice: <span className="font-medium text-foreground/80">Not issued yet</span></>
+                                                            ) : s.payment_confirmed_at ? (
+                                                                <>Invoice: <span className="font-medium text-emerald-700">Paid &amp; confirmed</span></>
+                                                            ) : s.payment_reported_at ? (
+                                                                <>Invoice: <span className="font-medium text-amber-700">Payment under review</span></>
+                                                            ) : (
+                                                                <>Invoice: <span className="font-medium text-foreground/80">Issued — complete payment</span></>
+                                                            )}
+                                                        </p>
                                                     </div>
                                                     <div className="flex flex-wrap items-center gap-2">
                                                         {s.invoice_generated_at && (
@@ -448,6 +460,16 @@ export default function MyBookingsPage() {
                                             <p className="text-sm text-muted-foreground">{invoiceModalSubmission.event_location || invoiceModalSubmission.rental_location || "—"}</p>
                                         </div>
                                     </div>
+                                    <div className="rounded-xl border border-border/50 bg-muted/30 px-4 py-3 text-sm">
+                                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Payment status</p>
+                                        {invoiceModalSubmission.payment_confirmed_at ? (
+                                            <p className="font-medium text-emerald-700">Confirmed on {new Date(invoiceModalSubmission.payment_confirmed_at).toLocaleDateString()}</p>
+                                        ) : invoiceModalSubmission.payment_reported_at ? (
+                                            <p className="font-medium text-amber-700">Reported on {new Date(invoiceModalSubmission.payment_reported_at).toLocaleDateString()} — awaiting confirmation</p>
+                                        ) : (
+                                            <p className="text-muted-foreground">Awaiting payment</p>
+                                        )}
+                                    </div>
                                     {bankDetails && (bankDetails.bankName || bankDetails.accountName || bankDetails.accountNumber) && (
                                         <div className="pt-5 border-t border-border/50">
                                             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -462,9 +484,19 @@ export default function MyBookingsPage() {
                                             </div>
                                         </div>
                                     )}
-                                    <p className="text-sm text-muted-foreground leading-relaxed pt-2">
-                                        Please keep this invoice for your records. Contact us if you have any questions.
-                                    </p>
+                                    <div className="pt-2 space-y-3">
+                                        <p className="text-sm text-muted-foreground leading-relaxed">
+                                            Please keep this invoice for your records. Contact us if you have any questions.
+                                        </p>
+                                        <button
+                                            type="button"
+                                            onClick={() => downloadInvoiceFile(invoiceModalSubmission, bankDetails)}
+                                            className="inline-flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary px-4 py-2.5 text-sm font-semibold transition-colors"
+                                        >
+                                            <Download className="h-4 w-4" />
+                                            Download invoice
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

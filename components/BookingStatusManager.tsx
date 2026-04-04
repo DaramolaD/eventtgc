@@ -4,7 +4,8 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { updateSubmissionStatus, generateInvoice, getBankDetails } from "@/app/actions/submissions";
 import { cn } from "@/lib/utils";
-import { Check, X, Clock, RefreshCw, Eye, Search, ChevronLeft, ChevronRight, FileText, Loader2, AlertCircle, CreditCard } from "lucide-react";
+import { Check, X, Clock, RefreshCw, Eye, Search, ChevronLeft, ChevronRight, FileText, Loader2, AlertCircle, CreditCard, Download } from "lucide-react";
+import { downloadInvoiceFile } from "@/lib/invoiceDownload";
 
 export default function BookingStatusManager({ initialSubmissions }: { initialSubmissions: any[] }) {
     const [submissions, setSubmissions] = useState(initialSubmissions);
@@ -334,17 +335,40 @@ export default function BookingStatusManager({ initialSubmissions }: { initialSu
                                     <h3 className="text-[11px] font-black uppercase text-[#e91e63] tracking-[0.2em] mb-4">Invoice</h3>
                                     <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100">
                                         {selectedSubmission.invoice_generated_at ? (
-                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                                <div>
-                                                    <p className="text-[11px] font-black text-[#aaa] uppercase tracking-widest mb-1">Invoice number</p>
-                                                    <p className="font-bold text-[#1a1a1a]">{selectedSubmission.invoice_number || '—'}</p>
-                                                    <p className="text-[12px] text-[#888] mt-1">
-                                                        Generated {new Date(selectedSubmission.invoice_generated_at).toLocaleDateString()}
-                                                    </p>
+                                            <div className="flex flex-col gap-4">
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                                    <div>
+                                                        <p className="text-[11px] font-black text-[#aaa] uppercase tracking-widest mb-1">Invoice number</p>
+                                                        <p className="font-bold text-[#1a1a1a]">{selectedSubmission.invoice_number || "—"}</p>
+                                                        <p className="text-[12px] text-[#888] mt-1">
+                                                            Generated {new Date(selectedSubmission.invoice_generated_at).toLocaleDateString()}
+                                                        </p>
+                                                    </div>
+                                                    <span className="inline-flex items-center px-4 py-2 rounded-xl bg-green-50 text-green-700 border border-green-100 text-[12px] font-bold">
+                                                        Visible in My Bookings
+                                                    </span>
                                                 </div>
-                                                <span className="inline-flex items-center px-4 py-2 rounded-xl bg-green-50 text-green-700 border border-green-100 text-[12px] font-bold">
-                                                    Invoice generated — visible in My Bookings
-                                                </span>
+                                                <div className="flex flex-wrap gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={async () => {
+                                                            const bank = await getBankDetails();
+                                                            downloadInvoiceFile(selectedSubmission, bank);
+                                                        }}
+                                                        className="inline-flex items-center gap-2 rounded-2xl border border-[#eee] bg-white px-4 py-2.5 text-[12px] font-bold text-[#1a1a1a] hover:bg-gray-50 transition-all"
+                                                    >
+                                                        <Download className="h-4 w-4" />
+                                                        Download invoice (.txt)
+                                                    </button>
+                                                </div>
+                                                <p className="text-[11px] text-[#888]">
+                                                    Payment:{" "}
+                                                    {selectedSubmission.payment_confirmed_at
+                                                        ? `Confirmed ${new Date(selectedSubmission.payment_confirmed_at).toLocaleDateString()}`
+                                                        : selectedSubmission.payment_reported_at
+                                                          ? `Client reported ${new Date(selectedSubmission.payment_reported_at).toLocaleDateString()}`
+                                                          : "Awaiting payment"}
+                                                </p>
                                             </div>
                                         ) : (
                                             <div className="flex flex-col gap-4">
